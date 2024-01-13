@@ -1,14 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RicKit.Localization.JsonConvertor;
-using RicKit.Localization.Package;
 using UnityEngine;
 
 namespace RicKit.Localization.Config
 {
     public class Config : ScriptableObject
     {
-        public List<LocalizationPackage.Kvp> languageIsoPairs = new List<LocalizationPackage.Kvp>();
+        public List<LanguageIsoPair> languageIsoPairs = new List<LanguageIsoPair>();
         private readonly Dictionary<string,string> languageIsoPairsDict = new Dictionary<string, string>();
         public List<string> SupportedLanguages { get; private set; }
         public WebDriverType webDriver;
@@ -17,6 +17,17 @@ namespace RicKit.Localization.Config
             Edge,
             Chrome,
             FireFox,
+        }
+        [Serializable]
+        public struct LanguageIsoPair
+        {
+            public string language;
+            public string isoCode;
+            public LanguageIsoPair(string language, string isoCode)
+            {
+                this.language = language;
+                this.isoCode = isoCode;
+            }
         }
         public IJsonConverter CurrentJsonConverter
         {
@@ -27,7 +38,7 @@ namespace RicKit.Localization.Config
                 {
                     if (type.FullName == currentJsonConverterName)
                     {
-                        return System.Activator.CreateInstance(type) as IJsonConverter;
+                        return Activator.CreateInstance(type) as IJsonConverter;
                     }
                 }
                 return new DefaultJsonConverter();
@@ -35,14 +46,13 @@ namespace RicKit.Localization.Config
             }
         }
         public string currentJsonConverterName = "RicKit.Localization.JsonConverter.DefaultJsonConverter";
-        public int Count => SupportedLanguages.Count;
 
         public void Update()
         {
             languageIsoPairsDict.Clear();
             foreach (var pair in languageIsoPairs)
             {
-                languageIsoPairsDict.Add(pair.key, pair.value);
+                languageIsoPairsDict.Add(pair.language, pair.isoCode);
             }
             SupportedLanguages = languageIsoPairsDict.Keys.ToList();
         }
@@ -60,13 +70,13 @@ namespace RicKit.Localization.Config
         }
         private bool IsoPairsContains(string language)
         {
-            return languageIsoPairs.Any(p => p.key == language);
+            return languageIsoPairs.Any(p => p.language == language);
         }
         public void AddIsoPair(string language, string isoCode)
         {
             if (!IsoPairsContains(language))
             {
-                languageIsoPairs.Add(new LocalizationPackage.Kvp(language, isoCode));
+                languageIsoPairs.Add(new LanguageIsoPair(language, isoCode));
             }
         }
     }

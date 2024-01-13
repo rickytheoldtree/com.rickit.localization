@@ -1,4 +1,8 @@
 # Changelog
+## [1.0.4] - 2024-01-13
+
+- fix: fix bugs
+
 ## [1.0.3] - 2024-01-13
 
 - fix: driver path bug
