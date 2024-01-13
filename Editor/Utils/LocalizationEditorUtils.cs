@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using RicKit.Tools.Localization.JsonConverter;
-using RicKit.Tools.Localization.Translator;
+using RicKit.Localization.JsonConvertor;
+using RicKit.Localization.Translate;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Kvp = RicKit.Tools.Localization.LocalizationPackage.Kvp;
+using Kvp = RicKit.Localization.LocalizationPackage.Kvp;
 
-namespace RicKit.Tools.Localization
+namespace RicKit.Localization.Utils
 {
     public static class LocalizationEditorUtils
     {
@@ -19,10 +19,10 @@ namespace RicKit.Tools.Localization
         public const string MainPackageRoot = DefaultRoot + "/MainPackage";
         public const string MainPackageName = "MainEditor.asset";
         private const string NewPackageRoot = DefaultRoot + "/NewPacakge";
-        private const string NewPacakgeName = "NewEditor.asset";
+        private const string NewPackageName = "NewEditor.asset";
         public const string ConfigName = "Config.asset";
-        public static LanguageEnum langShow = LanguageEnum.English;
-        private static LanguageEnum langFrom;
+        public static string langShow;
+        private static string langFrom;
         [MenuItem("RicKit/Localization/Create MainEditor")]
         private static void GetMainEditorMenu()
         {
@@ -51,9 +51,9 @@ namespace RicKit.Tools.Localization
             return localization;
         }
 
-        private static Config GetConfig()
+        private static Config.Config GetConfig()
         {
-            var config = AssetDatabase.LoadAssetAtPath<Config>($"{DefaultRoot}/{ConfigName}");
+            var config = AssetDatabase.LoadAssetAtPath<Config.Config>($"{DefaultRoot}/{ConfigName}");
             if(!config)
             {
                 if (!Directory.Exists(DefaultRoot))
@@ -61,25 +61,34 @@ namespace RicKit.Tools.Localization
                     Directory.CreateDirectory(DefaultRoot);
                     AssetDatabase.Refresh();
                 }
-                config = ScriptableObject.CreateInstance<Config>();
+                config = ScriptableObject.CreateInstance<Config.Config>();
                 AssetDatabase.CreateAsset(config, $"{DefaultRoot}/{ConfigName}");
                 Debug.Log($"Create {ConfigName} at {DefaultRoot}");
             }
             return config;
         }
-        public static List<LanguageEnum> GetSupportedLanguages()
+        public static string GetIsoCode(string language)
+        {
+            return GetConfig().GetIsoCode(language);
+        }
+        public static List<string> GetSupportedLanguages()
         {
             var config = GetConfig();
-            return config.supportedLanguages;
+            return config.SupportedLanguages;
         }
-        public static Config.WebDriverType GetWebDriver()
+        public static void UpdateConfig()
+        {
+            var config = GetConfig();
+            config.Update();
+        }
+        public static Config.Config.WebDriverType GetWebDriver()
         {
             var config = GetConfig();
             return config.webDriver;
         }
         private static LocalizationPackage GetNewEditor()
         {
-            var localization = AssetDatabase.LoadAssetAtPath<LocalizationPackage>($"{NewPackageRoot}/{NewPacakgeName}");
+            var localization = AssetDatabase.LoadAssetAtPath<LocalizationPackage>($"{NewPackageRoot}/{NewPackageName}");
             if(!localization)
             {
                 if (!Directory.Exists(NewPackageRoot))
@@ -88,12 +97,12 @@ namespace RicKit.Tools.Localization
                     AssetDatabase.Refresh();
                 }
                 localization = ScriptableObject.CreateInstance<LocalizationPackage>();
-                AssetDatabase.CreateAsset(localization, $"{NewPackageRoot}/{NewPacakgeName}");
-                Debug.Log($"Create {NewPacakgeName} at {NewPackageRoot}");
+                AssetDatabase.CreateAsset(localization, $"{NewPackageRoot}/{NewPackageName}");
+                Debug.Log($"Create {NewPackageName} at {NewPackageRoot}");
             }
             else
             {
-                Debug.Log($"{NewPacakgeName} 在 {NewPackageRoot}");
+                Debug.Log($"{NewPackageName} 在 {NewPackageRoot}");
             }
 
             localization.isNew = true;
@@ -107,21 +116,6 @@ namespace RicKit.Tools.Localization
                 Directory.CreateDirectory($"{GetRootPath(localization)}/NEWJSON");
                 AssetDatabase.Refresh();
             }
-        }
-        public static List<IJsonConverter> GetJsonConverters()
-        {
-            var types = typeof(IJsonConverter).Assembly.GetTypes();
-            var converters = new List<IJsonConverter>();
-            foreach (var type in types)
-            {
-                if (type.IsAbstract || type.IsInterface)
-                    continue;
-                if (typeof(IJsonConverter).IsAssignableFrom(type))
-                {
-                    converters.Add((IJsonConverter)Activator.CreateInstance(type));
-                }
-            }
-            return converters;
         }
 
         private static void OutputJson(string path, Dictionary<string, string> dic)
@@ -142,7 +136,7 @@ namespace RicKit.Tools.Localization
             
             EditorApplication.delayCall += () =>
             {
-                localization.language = LanguageEnum.English;
+                localization.language = GetSupportedLanguages()[0];
                 localization.Load();
                 localization.AddKey(key, value);
             };
@@ -161,7 +155,7 @@ namespace RicKit.Tools.Localization
                 return;
             }
             local.fields.Add(new Kvp(key, value));
-            Debug.Log($"Add key \"{key}\" to {local.name}: {local.language}");
+            Debug.Log($"AddIsoPair key \"{key}\" to {local.name}: {local.language}");
             EditorUtility.SetDirty(local);
             AssetDatabase.SaveAssets();
             LocalizationPackageAbstractEditor.foldSearch = true;
@@ -193,7 +187,7 @@ namespace RicKit.Tools.Localization
         public static void Load(this LocalizationPackage local)
         {
             langShow = local.language;
-            var lang = LanguageEnum.English;
+            var lang = GetSupportedLanguages()[0];
             if (!Directory.Exists($"{GetRootPath(local)}/JSON"))
             {
                 Directory.CreateDirectory($"{GetRootPath(local)}/JSON");
@@ -237,7 +231,7 @@ namespace RicKit.Tools.Localization
 
         public static void ExportAllSupportedForTranslation(this LocalizationPackage local)
         {
-            foreach (LanguageEnum lang in local.SupportedLanguages)
+            foreach (var lang in local.SupportedLanguages)
             {
                 local.language = lang;
                 Load(local);
@@ -266,7 +260,7 @@ namespace RicKit.Tools.Localization
                 .Where(s => !string.IsNullOrEmpty(s)).ToList();
             return true;
         }
-        public static void ImportFromTranslation(this LocalizationPackage local, LanguageEnum targetLanguage)
+        public static void ImportFromTranslation(this LocalizationPackage local, string targetLanguage)
         {
             if(!File.Exists($"{GetRootPath(local)}/TXT/{targetLanguage}.txt"))
             {
@@ -434,7 +428,7 @@ namespace RicKit.Tools.Localization
         }
 
         #region 翻译
-        public static bool TranslateJson(this LocalizationPackage local, LanguageEnum from, LanguageEnum to)
+        public static bool TranslateJson(this LocalizationPackage local, string from, string to)
         {
             var translator = GoogleTranslator.GetInstance(GetConfig().webDriver);
             if(from == to)
@@ -501,7 +495,7 @@ namespace RicKit.Tools.Localization
             Debug.Log($"{to}翻译完成，文件路径：{foldPath}/{to}.json");
             return true;
         }
-        public static bool IsTranslated(this LocalizationPackage local, LanguageEnum lang)
+        public static bool IsTranslated(this LocalizationPackage local, string lang)
         {
             var rootPath = $"{GetRootPath(local)}/TranslateJSON";
             if (!Directory.Exists(rootPath))
@@ -512,7 +506,5 @@ namespace RicKit.Tools.Localization
             return File.Exists(path);
         }
         #endregion
-
-        
     }
 }

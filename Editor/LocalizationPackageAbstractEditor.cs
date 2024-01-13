@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RicKit.Tools.Localization.Translator;
+using RicKit.Localization.Translate;
+using RicKit.Localization.Utils;
 using UnityEditor;
 using UnityEngine;
-using Kvp = RicKit.Tools.Localization.LocalizationPackage.Kvp;
+using Kvp = RicKit.Localization.LocalizationPackage.Kvp;
 using Object = UnityEngine.Object;
 
-namespace RicKit.Tools.Localization
+namespace RicKit.Localization
 {
     public abstract class LocalizationPackageAbstractEditor : Editor
     {
@@ -18,13 +19,12 @@ namespace RicKit.Tools.Localization
         public static bool foldSearch;
         private static bool foldSupportLangs;
         protected LocalizationPackage package;
-        private SerializedProperty langProp;
         private Vector2 scrollPos;
 
         private void OnEnable()
         {
-            langProp = serializedObject.FindProperty("language");
             package = (LocalizationPackage)target;
+            LocalizationEditorUtils.UpdateConfig();
         }
 
         private void ShowSupportedLanguages()
@@ -63,31 +63,29 @@ namespace RicKit.Tools.Localization
 
             EditorGUI.indentLevel--;
         }
-        private static int translateSourceIndex = 0;
-        // 如果修改了LanguageEnum，这里也要修改
-        private static readonly string[] TranslateSource =
-        {
-            LanguageEnum.English.ToString(),
-            LanguageEnum.ChineseSimplified.ToString()
-        };
+        private static int translateFromIndex;
+        private static int translateToIndex;
         private void ShowTranslationTools()
         {
             foldTranslation = EditorGUILayout.Foldout(foldTranslation, "翻译工具");
             if (foldTranslation)
             {
-                //helpbox
                 EditorGUILayout.HelpBox("翻译工具需要WebDriver，如有疑问请看README; 翻译时读取的是JSON文件夹下的.json文件为源文件，翻译后会保存到TranslateJSON文件夹", MessageType.Info);
                 EditorGUI.indentLevel++;
                 EditorGUILayout.LabelField($"当前WebDriver：{LocalizationEditorUtils.GetWebDriver()}");
                 //选择源语言
-                translateSourceIndex = EditorGUILayout.Popup("翻译源语言：", translateSourceIndex, TranslateSource);
-                var sourceLang = (LanguageEnum)Enum.Parse(typeof(LanguageEnum), TranslateSource[translateSourceIndex]);
+                var translateSource = package.SupportedLanguages.ToArray();
+                translateFromIndex = EditorGUILayout.Popup("翻译源语言：", translateFromIndex, translateSource);
+                //选择目标语言
+                translateToIndex = EditorGUILayout.Popup("翻译目标语言：", translateToIndex, translateSource);
+                var translateFrom = translateSource[translateFromIndex];
+                var translateTo = translateSource[translateToIndex];
                 EditorGUI.indentLevel--;
                 EditorGUILayout.Separator();
-                EditorGUILayout.LabelField($"翻译成：{package.language}");
-                if (GUILayout.Button($"翻译成{package.language}"))
+                EditorGUILayout.LabelField($"翻译成：{translateTo}");
+                if (GUILayout.Button($"翻译成{translateTo}"))
                 {
-                    package.TranslateJson(sourceLang, package.language);
+                    package.TranslateJson(translateFrom, translateTo);
                     GoogleTranslator.Close();
                 }
                 EditorGUILayout.Separator();
@@ -96,7 +94,7 @@ namespace RicKit.Tools.Localization
                 {
                     foreach (var lang in package.SupportedLanguages)
                     {
-                        if (!package.TranslateJson(sourceLang, lang))
+                        if (!package.TranslateJson(translateFrom, lang))
                         {
                             Debug.LogError($"任务中断，翻译到{lang}失败");
                             break;
@@ -114,7 +112,7 @@ namespace RicKit.Tools.Localization
                         {
                             continue;
                         }
-                        if (!package.TranslateJson(sourceLang, lang))
+                        if (!package.TranslateJson(translateFrom, lang))
                         {
                             Debug.LogError($"任务中断，翻译到{lang}失败");
                             break;
@@ -124,14 +122,14 @@ namespace RicKit.Tools.Localization
                 }
             }
         }
+
+        private int langIndex;
         public override void OnInspectorGUI()
         {
-            if (langProp == null)
-                OnEnable();
-
             #region 常规功能
-
-            EditorGUILayout.PropertyField(langProp);
+            langIndex = EditorGUILayout.Popup("语言：", langIndex, package.SupportedLanguages.ToArray());
+            package.language = package.SupportedLanguages.ElementAt(langIndex);
+            
             ShowSupportedLanguages();
             //获取target的父文件夹
             var path = AssetDatabase.GetAssetPath(target);
