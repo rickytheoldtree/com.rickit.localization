@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using RicKit.Localization.Utils;
 using UnityEngine;
 
-namespace RicKit.Localization
+namespace RicKit.Localization.Package
 {
     [Serializable]
     public class LocalizationPackage : ScriptableObject

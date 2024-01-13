@@ -27,9 +27,9 @@ namespace RicKit.Localization.Translate
                 Debug.LogError("未找到驱动路径");
                 return null;
             }
-            //获取Packages路径
             var root = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/Assets", StringComparison.Ordinal));
             var path = $"{root}/{AssetDatabase.GUIDToAssetPath(guids[0])}/drivers";
+            path = path.Replace("Packages", "Library/PackageCache");
             return path;
         }
     }

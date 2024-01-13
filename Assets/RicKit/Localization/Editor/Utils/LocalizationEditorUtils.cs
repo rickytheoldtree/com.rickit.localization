@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using RicKit.Localization.JsonConvertor;
+using RicKit.Localization.Package;
 using RicKit.Localization.Translate;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Kvp = RicKit.Localization.LocalizationPackage.Kvp;
+using Kvp = RicKit.Localization.Package.LocalizationPackage.Kvp;
 
 namespace RicKit.Localization.Utils
 {

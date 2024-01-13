@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RicKit.Localization.JsonConvertor;
+using RicKit.Localization.Package;
 using UnityEngine;
 
 namespace RicKit.Localization.Config

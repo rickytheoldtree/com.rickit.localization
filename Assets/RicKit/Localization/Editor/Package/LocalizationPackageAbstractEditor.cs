@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RicKit.Localization.Translate;
 using RicKit.Localization.Utils;
 using UnityEditor;
 using UnityEngine;
-using Kvp = RicKit.Localization.LocalizationPackage.Kvp;
+using Kvp = RicKit.Localization.Package.LocalizationPackage.Kvp;
 using Object = UnityEngine.Object;
 
-namespace RicKit.Localization
+namespace RicKit.Localization.Package
 {
     public abstract class LocalizationPackageAbstractEditor : Editor
     {
@@ -30,14 +29,6 @@ namespace RicKit.Localization
         private void ShowSupportedLanguages()
         {
             var supportedLanguages = package.SupportedLanguages;
-            if (supportedLanguages.Count == 0)
-            {
-                EditorGUILayout.HelpBox(
-                    $"请在\"{LocalizationEditorUtils.DefaultRoot}/{LocalizationEditorUtils.ConfigName}\"设置游戏将会支持的语言",
-                    MessageType.Warning);
-                return;
-            }
-
             var lang = package.language;
             var richTextStyle = new GUIStyle(EditorStyles.label)
             {
@@ -126,10 +117,15 @@ namespace RicKit.Localization
         private int langIndex;
         public override void OnInspectorGUI()
         {
+            if(package.SupportedLanguages == null || package.SupportedLanguages.Count == 0)
+            {
+                EditorGUILayout.HelpBox("请在Config中设置支持的语言", MessageType.Warning);
+                return;
+            }
+            
             #region 常规功能
             langIndex = EditorGUILayout.Popup("语言：", langIndex, package.SupportedLanguages.ToArray());
             package.language = package.SupportedLanguages.ElementAt(langIndex);
-            
             ShowSupportedLanguages();
             //获取target的父文件夹
             var path = AssetDatabase.GetAssetPath(target);
