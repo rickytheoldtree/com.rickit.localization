@@ -4,15 +4,16 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
+using RicKit.Localization.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace RicKit.Tools.Localization.Translator
+namespace RicKit.Localization.Translate
 {
    public class GoogleTranslator
 {
     private static GoogleTranslator instance;
-    private readonly Config.WebDriverType driverType;
+    private readonly Config.Config.WebDriverType driverType;
     private readonly IWebDriver driver;
     private string url;
 
@@ -26,11 +27,14 @@ namespace RicKit.Tools.Localization.Translator
                 Debug.LogError("未找到驱动路径");
                 return null;
             }
-            var path = $"{Application.dataPath}/{AssetDatabase.GUIDToAssetPath(guids[0]).Remove(0, 6)}/drivers";
+            //获取Packages路径
+            var root = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/Assets", StringComparison.Ordinal));
+            var path = $"{root}/{AssetDatabase.GUIDToAssetPath(guids[0])}/drivers";
             return path;
         }
     }
-    public static GoogleTranslator GetInstance(Config.WebDriverType driver)
+
+    public static GoogleTranslator GetInstance(Config.Config.WebDriverType driver)
     {
         if(instance == null)
         {
@@ -43,27 +47,27 @@ namespace RicKit.Tools.Localization.Translator
         }
         return instance;
     }
-    private GoogleTranslator(Config.WebDriverType e)
+    private GoogleTranslator(Config.Config.WebDriverType e)
     {
-        driverType = Config.WebDriverType.Edge;
+        driverType = Config.Config.WebDriverType.Edge;
         switch (e)
         {
             default:
-            case Config.WebDriverType.Edge:
+            case Config.Config.WebDriverType.Edge:
                 driver = new EdgeDriver(DriversPath);
                 break;
-            case Config.WebDriverType.Chrome:
+            case Config.Config.WebDriverType.Chrome:
                 driver = new ChromeDriver(DriversPath);
                 break;
-            case Config.WebDriverType.FireFox:
+            case Config.Config.WebDriverType.FireFox:
                 driver = new FirefoxDriver(DriversPath);
                 break;
         }
     }
-    public bool Translate(string txt, LanguageEnum from, LanguageEnum to, Action<List<string>> callback)
+    public bool Translate(string txt, string from, string to, Action<List<string>> callback)
     {
-        url = $"https://translate.google.com/?hl=en&sl={LangEnumParse.GetLanguageString(from)}" +
-              $"&tl={LangEnumParse.GetLanguageString(to)}" +
+        url = $"https://translate.google.com/?hl=en&sl={LocalizationEditorUtils.GetIsoCode(from)}" +
+              $"&tl={LocalizationEditorUtils.GetIsoCode(to)}" +
               $"&text={GetUrlSafeString(txt)}" +
               "&op=translate";
         try

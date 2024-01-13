@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
-namespace RicKit.Tools.Localization.JsonConverter
+namespace RicKit.Localization.JsonConvertor
 {
     public interface IJsonConverter
     {

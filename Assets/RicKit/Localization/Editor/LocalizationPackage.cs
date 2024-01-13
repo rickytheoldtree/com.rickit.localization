@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using RicKit.Localization.Utils;
 using UnityEngine;
 
-namespace RicKit.Tools.Localization
+namespace RicKit.Localization
 {
     [Serializable]
     public class LocalizationPackage : ScriptableObject
     {
-        public LanguageEnum language = LanguageEnum.English;
+        public string language;
         public bool isNew;
         [Serializable]
         public struct Kvp
@@ -20,7 +21,7 @@ namespace RicKit.Tools.Localization
                 this.value = value;
             }
         }
-        public List<LanguageEnum> SupportedLanguages => LocalizationEditorUtils.GetSupportedLanguages();
+        public List<string> SupportedLanguages => LocalizationEditorUtils.GetSupportedLanguages();
         public List<Kvp> fields = new List<Kvp>();
     }
 }
