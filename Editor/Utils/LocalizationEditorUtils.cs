@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using RicKit.Localization.JsonConvertor;
 using RicKit.Localization.Package;
 using RicKit.Localization.Translate;
 using UnityEditor;
@@ -52,7 +51,7 @@ namespace RicKit.Localization.Utils
             return localization;
         }
 
-        private static Config.Config GetConfig()
+        public static Config.Config GetConfig()
         {
             var config = AssetDatabase.LoadAssetAtPath<Config.Config>($"{DefaultRoot}/{ConfigName}");
             if(!config)
@@ -285,7 +284,7 @@ namespace RicKit.Localization.Utils
             {
                 dic.Add(keys[i], values[i].Trim());
             }
-            OutputJson($"{GetRootPath(local)}/JSON/{targetLanguage}.json", dic);
+            OutputJson($"{GetRootPath(local)}\\JSON\\{targetLanguage}.json", dic);
             Load(local);
         }
 
@@ -338,25 +337,25 @@ namespace RicKit.Localization.Utils
         {
             foreach (var lang in local.SupportedLanguages)
             {
-                if (!Directory.Exists($"{GetRootPath(local)}/NEWJSON"))
+                if (!Directory.Exists($"{GetRootPath(local)}\\NEWJSON"))
                 {
-                    Directory.CreateDirectory($"{GetRootPath(local)}/NEWJSON");
+                    Directory.CreateDirectory($"{GetRootPath(local)}\\NEWJSON");
                     AssetDatabase.Refresh();
                     Debug.Log("请将需要合并的json文件放入NEWJSON文件夹中");
                     return;
                 }
-                if (!File.Exists($"{GetRootPath(local)}/NEWJSON/{lang}.json"))
+                if (!File.Exists($"{GetRootPath(local)}\\NEWJSON\\{lang}.json"))
                 {
                     Debug.Log($"文件{lang}.json不存在");
                     continue;
                 }
-                var dic = InputJson($"{GetRootPath(local)}/NEWJSON/{lang}.json");
-                var dicOld = InputJson($"{GetRootPath(local)}/JSON/{lang}.json");
+                var dic = InputJson($"{GetRootPath(local)}\\NEWJSON\\{lang}.json");
+                var dicOld = InputJson($"{GetRootPath(local)}\\JSON\\{lang}.json");
                 foreach (var d in dic)
                 {
                     dicOld[d.Key] = d.Value;
                 }
-                OutputJson($"{GetRootPath(local)}/JSON/{lang}.json", dicOld);
+                OutputJson($"{GetRootPath(local)}\\JSON\\{lang}.json", dicOld);
             }
             AssetDatabase.Refresh();
         }
@@ -365,20 +364,20 @@ namespace RicKit.Localization.Utils
         {
             foreach (var lang in local.SupportedLanguages)
             {
-                if (!Directory.Exists($"{GetRootPath(local)}/NEWJSON"))
+                if (!Directory.Exists($"{GetRootPath(local)}\\NEWJSON"))
                 {
-                    Directory.CreateDirectory($"{GetRootPath(local)}/NEWJSON");
+                    Directory.CreateDirectory($"{GetRootPath(local)}\\NEWJSON");
                     AssetDatabase.Refresh();
                     Debug.Log("请将需要合并的json文件放入NEWJSON文件夹中");
                     return;
                 }
-                if (!File.Exists($"{GetRootPath(local)}/NEWJSON/{lang}.json"))
+                if (!File.Exists($"{GetRootPath(local)}\\NEWJSON\\{lang}.json"))
                 {
                     Debug.Log($"文件{lang}.json不存在");
                     continue;
                 }
-                var dic = InputJson($"{GetRootPath(local)}/NEWJSON/{lang}.json");
-                var dicOld = InputJson($"{GetRootPath(local)}/JSON/{lang}.json");
+                var dic = InputJson($"{GetRootPath(local)}\\NEWJSON\\{lang}.json");
+                var dicOld = InputJson($"{GetRootPath(local)}\\JSON\\{lang}.json");
                 foreach (var d in dic)
                 {
                     if (!dicOld.ContainsKey(d.Key))
@@ -390,40 +389,40 @@ namespace RicKit.Localization.Utils
                         Debug.Log($"跳过{d.Key}，因为已经存在");
                     }
                 }
-                OutputJson($"{GetRootPath(local)}/JSON/{lang}.json", dicOld);
+                OutputJson($"{GetRootPath(local)}\\JSON\\{lang}.json", dicOld);
             }
             AssetDatabase.Refresh();
         }
-        public static void OpenNewPacakge(this LocalizationPackage local)
+        public static void OpenNewPackage(this LocalizationPackage local)
         {
             var newEditor = GetNewEditor();
-            // 选中NewPacakge.asset
+            // 选中NewPackage.asset
             Selection.activeObject = newEditor;
         }
 
-        public static void MoveNewPacakgeJson2MainPackageNewJson(this LocalizationPackage newEditor)
+        public static void MoveNewPackageJson2MainPackageNewJson(this LocalizationPackage newEditor)
         {
             var mainEditor = GetMainEditor();
-            //判断mainPackage的NEWJSOn文件夹是否为空
-            if (!Directory.Exists($"{GetRootPath(mainEditor)}/NEWJSON"))
+            //判断mainPackage的NEWJSON文件夹是否为空
+            if (!Directory.Exists($"{GetRootPath(mainEditor)}\\NEWJSON"))
             {
-                Directory.CreateDirectory($"{GetRootPath(mainEditor)}/NEWJSON");
+                Directory.CreateDirectory($"{GetRootPath(mainEditor)}\\NEWJSON");
             }
             //判断NewJSON里面是否有文件
-            if (Directory.GetFiles($"{GetRootPath(mainEditor)}/NEWJSON").Length != 0)
+            if (Directory.GetFiles($"{GetRootPath(mainEditor)}\\NEWJSON").Length != 0)
             {
-                Debug.LogWarning("【移动取消】MainPackage/NEWJSON文件夹内有东西，请自行确认后删除");
+                Debug.LogWarning("【移动取消】MainPackage\\NEWJSON文件夹内有东西，请自行确认后删除");
                 return;
             }
             //将NewPackage的JSON文件夹复制到MainPackage的NEWJSON文件夹
             foreach (var lang in newEditor.SupportedLanguages)
             {
-                if (!File.Exists($"{GetRootPath(newEditor)}/JSON/{lang}.json"))
+                if (!File.Exists($"{GetRootPath(newEditor)}\\JSON\\{lang}.json"))
                 {
                     Debug.Log($"文件{lang}.json不存在");
                     continue;
                 }
-                File.Copy($"{GetRootPath(newEditor)}/JSON/{lang}.json", $"{GetRootPath(mainEditor)}/NEWJSON/{lang}.json");
+                File.Copy($"{GetRootPath(newEditor)}\\JSON\\{lang}.json", $"{GetRootPath(mainEditor)}\\NEWJSON\\{lang}.json");
             }
             AssetDatabase.Refresh();
         }
@@ -438,10 +437,10 @@ namespace RicKit.Localization.Utils
                 return true;
             }
             var rootPath = GetRootPath(local);
-            var originJsonPath = $"{rootPath}/JSON/{from}.json";
+            var originJsonPath = $"{rootPath}\\JSON\\{from}.json";
             if (!File.Exists(originJsonPath))
             {
-                Debug.LogError($"文件{rootPath}/JSON/{from}.json不存在");
+                Debug.LogError($"文件{rootPath}\\JSON\\{from}.json不存在");
                 return false;
             }
             var sb = new StringBuilder();
@@ -449,7 +448,7 @@ namespace RicKit.Localization.Utils
             var values = new List<string>();
             foreach (var d in originJson)
             {
-                var newText = $"{d.Value.Trim()}%0A-----------------------%0A";
+                var newText = $"%0A-----------------------%0A{d.Value.Trim()}";
                 if (newText.Length > 5000)
                 {
                     Debug.LogError($"单个文本长度超过5000，无法翻译：{d.Key}；请自行切分后重新尝试");
@@ -487,23 +486,23 @@ namespace RicKit.Localization.Utils
             {
                 dic.Add(keys[i], values[i]);
             }
-            var foldPath = $"{rootPath}/TranslateJSON";
+            var foldPath = $"{rootPath}\\TranslateJSON";
             if (!Directory.Exists(foldPath))
             {
                 Directory.CreateDirectory(foldPath);
             }
-            OutputJson($"{foldPath}/{to}.json", dic);
-            Debug.Log($"{to}翻译完成，文件路径：{foldPath}/{to}.json");
+            OutputJson($"{foldPath}\\{to}.json", dic);
+            Debug.Log($"{to}翻译完成，文件路径：{foldPath}\\{to}.json");
             return true;
         }
         public static bool IsTranslated(this LocalizationPackage local, string lang)
         {
-            var rootPath = $"{GetRootPath(local)}/TranslateJSON";
+            var rootPath = $"{GetRootPath(local)}\\TranslateJSON";
             if (!Directory.Exists(rootPath))
             {
                 Directory.CreateDirectory(rootPath);
             }
-            var path = $"{rootPath}/{lang}.json";
+            var path = $"{rootPath}\\{lang}.json";
             return File.Exists(path);
         }
         #endregion

@@ -28,6 +28,7 @@ namespace RicKit.Localization.Config
             EditorGUILayout.Separator();
             ChooseJsonConverter();
             ChooseWebDriver();
+            SetCustomDriverPath();
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -116,6 +117,19 @@ namespace RicKit.Localization.Config
                 config.webDriver = (Config.WebDriverType)driverIndex;
                 EditorUtility.SetDirty(config);
                 AssetDatabase.SaveAssets();
+            }
+        }
+        
+        private void SetCustomDriverPath()
+        {
+            config.customDriverPath = EditorGUILayout.Toggle("自定义Driver路径", config.customDriverPath);
+            if(config.customDriverPath)
+            {
+                config.driverPath = EditorGUILayout.TextField("Driver绝对路径", config.driverPath);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("如果驱动版本不对，请自定义driver读取路径", MessageType.Info);
             }
         }
     }
