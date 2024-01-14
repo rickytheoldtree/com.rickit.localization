@@ -22,6 +22,11 @@ namespace RicKit.Localization.Translate
     {
         get
         {
+            var config = LocalizationEditorUtils.GetConfig();
+            if (config.customDriverPath)
+            {
+                return config.driverPath;
+            }
             var guids = AssetDatabase.FindAssets("Selenium.WebDriver.4.15.0");
             if (guids.Length == 0)
             {

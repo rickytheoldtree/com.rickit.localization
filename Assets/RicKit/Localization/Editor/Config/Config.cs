@@ -12,6 +12,8 @@ namespace RicKit.Localization.Config
         private readonly Dictionary<string,string> languageIsoPairsDict = new Dictionary<string, string>();
         public List<string> SupportedLanguages { get; private set; }
         public WebDriverType webDriver;
+        public bool customDriverPath;
+        public string driverPath;
         public enum WebDriverType
         {
             Edge,

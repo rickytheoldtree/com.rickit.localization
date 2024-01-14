@@ -160,7 +160,7 @@ namespace RicKit.Localization.Package
             EditorGUILayout.EndHorizontal();
             if (package.isNew && GUILayout.Button("将NewPackage/JSON复制到MainPackage/NEWJSON"))
             {
-                package.MoveNewPacakgeJson2MainPackageNewJson();
+                package.MoveNewPackageJson2MainPackageNewJson();
             }
             EditorGUILayout.Separator();
 
@@ -294,7 +294,7 @@ namespace RicKit.Localization.Package
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("打开补充包生成工具");
                 if (GUILayout.Button("打开"))
-                    package.OpenNewPacakge();
+                    package.OpenNewPackage();
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("批量导入Json");
