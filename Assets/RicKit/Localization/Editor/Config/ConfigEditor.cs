@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RicKit.Localization.JsonConvertor;
+using RicKit.Localization.DictConvertor;
 using RicKit.Localization.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -83,15 +83,15 @@ namespace RicKit.Localization.Config
                 evt.Use();
             }
         }
-        private List<IJsonConverter> converters;
+        private List<IDictConverter> converters;
         private int converterIndex = -1;
         private int driverIndex;
         private void ChooseJsonConverter()
         {
             if (converters == null)
             {
-                converters = ReflectionHelper.GetAllTypeOfInterface<IJsonConverter>().Select(t => Activator.CreateInstance(t) as IJsonConverter).ToList();
-                converterIndex = converters.FindIndex(c => c.GetType() == config.CurrentJsonConverter.GetType());
+                converters = ReflectionHelper.GetAllTypeOfInterface<IDictConverter>().Select(t => Activator.CreateInstance(t) as IDictConverter).ToList();
+                converterIndex = converters.FindIndex(c => c.GetType() == config.CurrentDictConverter.GetType());
                 if (converterIndex == -1)
                 {
                     converterIndex = 0;

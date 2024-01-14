@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace RicKit.Localization.JsonConvertor
+namespace RicKit.Localization.DictConvertor
 {
-    public class DefaultJsonConverter : IJsonConverter
+    public class DefaultDictConverter : IDictConverter
     {
         public Dictionary<string, string> Convert(string json)
         {

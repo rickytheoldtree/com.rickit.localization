@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RicKit.Localization.JsonConvertor;
+using RicKit.Localization.DictConvertor;
 using UnityEngine;
 
 namespace RicKit.Localization.Config
@@ -31,23 +31,23 @@ namespace RicKit.Localization.Config
                 this.isoCode = isoCode;
             }
         }
-        public IJsonConverter CurrentJsonConverter
+        public IDictConverter CurrentDictConverter
         {
             get
             {
-                var types = Utils.ReflectionHelper.GetAllTypeOfInterface<IJsonConverter>();
+                var types = Utils.ReflectionHelper.GetAllTypeOfInterface<IDictConverter>();
                 foreach (var type in types)
                 {
                     if (type.FullName == currentJsonConverterName)
                     {
-                        return Activator.CreateInstance(type) as IJsonConverter;
+                        return Activator.CreateInstance(type) as IDictConverter;
                     }
                 }
-                return new DefaultJsonConverter();
+                return new DefaultDictConverter();
                 
             }
         }
-        public string currentJsonConverterName = "RicKit.Localization.JsonConverter.DefaultJsonConverter";
+        public string currentJsonConverterName = "RicKit.Localization.JsonConverter.DefaultDictConverter";
 
         public void Update()
         {

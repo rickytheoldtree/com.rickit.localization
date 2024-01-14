@@ -42,7 +42,7 @@ namespace RicKit.Localization.Package
                 foreach (var language in supportedLanguages)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    var str = language.ToString();
+                    var str = language;
                     if (language == lang)
                         str = $"<color=yellow>{str}</color>";
                     EditorGUILayout.LabelField(str, richTextStyle);
@@ -61,7 +61,7 @@ namespace RicKit.Localization.Package
             foldTranslation = EditorGUILayout.Foldout(foldTranslation, "翻译工具");
             if (foldTranslation)
             {
-                EditorGUILayout.HelpBox("翻译工具需要WebDriver，如有疑问请看README; 翻译时读取的是JSON文件夹下的.json文件为源文件，翻译后会保存到TranslateJSON文件夹", MessageType.Info);
+                EditorGUILayout.HelpBox("翻译工具需要WebDriver，如有疑问请看README; 翻译时读取的是Json文件夹下的.json文件为源文件，翻译后会保存到TranslateJson文件夹", MessageType.Info);
                 EditorGUI.indentLevel++;
                 EditorGUILayout.LabelField($"当前WebDriver：{LocalizationEditorUtils.GetWebDriver()}");
                 //选择源语言
@@ -130,7 +130,7 @@ namespace RicKit.Localization.Package
             //获取target的父文件夹
             var path = AssetDatabase.GetAssetPath(target);
             path = path.Substring(0, path.LastIndexOf('/'));
-            path = $"{path}/JSON/{package.language}.json";
+            path = $"{path}/Json/{package.language}.json";
             using (new EditorGUILayout.HorizontalScope())
             {
                 using (new EditorGUI.DisabledScope(true))
@@ -140,25 +140,25 @@ namespace RicKit.Localization.Package
                 var obj = AssetDatabase.LoadAssetAtPath<Object>(path);
                 if (obj && GUILayout.Button("打开文件", GUILayout.Width(100)))
                 {
-                    //打开json文件
+                    //打开Json文件
                     AssetDatabase.OpenAsset(obj);
                 }
             }
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("保存到JSON"))
+            if (GUILayout.Button("保存到Json"))
             {
                 package.Save();
             }
 
-            if (GUILayout.Button("从JSON加载") ||
+            if (GUILayout.Button("从Json加载") ||
                 LocalizationEditorUtils.langShow != package.language)
             {
                 forceUpdate = true;
                 package.Load();
             }
             EditorGUILayout.EndHorizontal();
-            if (package.isNew && GUILayout.Button("将NewPackage/JSON复制到MainPackage/NEWJSON"))
+            if (package.isNew && GUILayout.Button("将NewPackage/Json复制到MainPackage/NewJson"))
             {
                 package.MoveNewPackageJson2MainPackageNewJson();
             }
@@ -182,7 +182,7 @@ namespace RicKit.Localization.Package
 
                 if (searchResult.Count > 0)
                 {
-                    EditorGUILayout.HelpBox("\"删除\"会删除缓存中的该键值对，\"添加到New\"会将key添加到NewPacakge，\"保存\"会保存到缓存",
+                    EditorGUILayout.HelpBox("\"删除\"会删除缓存中的该键值对，\"添加到New\"会将key添加到NewPackage，\"保存\"会保存到缓存",
                         MessageType.Info);
                     var localization = package.fields;
                     var richTextStyle = new GUIStyle(EditorStyles.label)
@@ -228,7 +228,7 @@ namespace RicKit.Localization.Package
                                     localization[result.Key] = kvp;
                                     EditorUtility.SetDirty(target);
                                     AssetDatabase.SaveAssets();
-                                    // 取消选中textfeild
+                                    // 取消选中textfield
                                     GUI.FocusControl(null);
                                     forceUpdate = true;
                                     break;
@@ -264,9 +264,9 @@ namespace RicKit.Localization.Package
 
             #endregion
 
-            #region txt json互转(Supported Languages)
+            #region txt Json互转(Supported Languages)
 
-            foldTxtImport = EditorGUILayout.Foldout(foldTxtImport, "TXT-JSON互转");
+            foldTxtImport = EditorGUILayout.Foldout(foldTxtImport, "Txt-Json互转");
             if (foldTxtImport)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -276,9 +276,9 @@ namespace RicKit.Localization.Package
                     package.ExportAllSupportedForTranslation();
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("转json"))
+                if (GUILayout.Button("转Json"))
                     package.ImportFromTranslation(package.language);
-                if (GUILayout.Button("批量转json"))
+                if (GUILayout.Button("批量转Json"))
                     package.ImportAllSupportedFromTranslation();
                 EditorGUILayout.EndHorizontal();
             }
@@ -301,9 +301,9 @@ namespace RicKit.Localization.Package
                 if (GUILayout.Button("相同key取新值"))
                     package.MergeJsons();
                 if (GUILayout.Button("相同key取旧值"))
-                    package.MergeJsonsIncreasementOnly();
+                    package.MergeJsonsIncreaseOnly();
                 EditorGUILayout.EndHorizontal();
-                EditorGUILayout.HelpBox("将NEWJSON文件夹下的Json文件和JSON文件夹中的文件合并。输出到JSON文件夹，所以记得使用前备份JSON文件夹",
+                EditorGUILayout.HelpBox("将NewJson文件夹下的Json文件和Json文件夹中的文件合并。输出到Json文件夹，所以记得使用前备份Json文件夹",
                     MessageType.Info);
             }
 
