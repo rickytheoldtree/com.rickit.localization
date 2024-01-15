@@ -8,3 +8,6 @@
   - 使用Edge浏览器的请看https://learn.microsoft.com/zh-cn/microsoft-edge/webdriver-chromium/?tabs=c-sharp
   - 使用Chrome浏览器的请看https://blog.csdn.net/Z_Lisa/article/details/133307151
   - 使用FireFox浏览器的请看https://blog.csdn.net/weixin_39339460/article/details/113773738
+## 交流与反馈
+- Q群: 851024152
+- 欢迎问题反馈, 以及任何建议
