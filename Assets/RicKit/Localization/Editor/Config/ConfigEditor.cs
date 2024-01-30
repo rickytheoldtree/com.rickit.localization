@@ -17,7 +17,7 @@ namespace RicKit.Localization.Config
         {
             isoPair = serializedObject.FindProperty("languageIsoPairs");
             config = (Config)target;
-            config.Update();
+            config.Refresh();
             driverIndex = (int)config.webDriver;
         }
 
@@ -78,7 +78,7 @@ namespace RicKit.Localization.Config
                         config.AddIsoPair(pair.Key, pair.Value);
                     }
                     AssetDatabase.SaveAssets();
-                    config.Update();
+                    config.Refresh();
                 }
                 evt.Use();
             }
