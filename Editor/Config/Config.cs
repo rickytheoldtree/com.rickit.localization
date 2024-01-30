@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RicKit.Localization.DictConvertor;
+using UnityEditor;
 using UnityEngine;
 
 namespace RicKit.Localization.Config
@@ -49,11 +50,13 @@ namespace RicKit.Localization.Config
         }
         public string currentJsonConverterName = "RicKit.Localization.JsonConverter.DefaultDictConverter";
 
-        public void Update()
+        public void Refresh()
         {
             languageIsoPairsDict.Clear();
+            AssetDatabase.Refresh();
             foreach (var pair in languageIsoPairs)
             {
+                
                 languageIsoPairsDict.Add(pair.language, pair.isoCode);
             }
             SupportedLanguages = languageIsoPairsDict.Keys.ToList();

@@ -79,7 +79,7 @@ namespace RicKit.Localization.Utils
         public static void UpdateConfig()
         {
             var config = GetConfig();
-            config.Update();
+            config.Refresh();
         }
         public static Config.Config.WebDriverType GetWebDriver()
         {
