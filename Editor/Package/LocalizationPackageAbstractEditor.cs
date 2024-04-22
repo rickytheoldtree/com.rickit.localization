@@ -158,6 +158,10 @@ namespace RicKit.Localization.Package
                 package.Load();
             }
             EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("生成AllText.txt"))
+            {
+                package.GenerateAllText();
+            }
             if (package.isNew && GUILayout.Button("将NewPackage/Json复制到MainPackage/NewJson"))
             {
                 package.MoveNewPackageJson2MainPackageNewJson();

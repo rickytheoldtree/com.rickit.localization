@@ -506,5 +506,26 @@ namespace RicKit.Localization.Utils
             return File.Exists(path);
         }
         #endregion
+
+        #region 生成文本范围
+
+        public static void GenerateAllText(this LocalizationPackage local)
+        {
+            var sb = new StringBuilder();
+            foreach (var lang in local.SupportedLanguages)
+            {
+                var json = InputJson($"{GetRootPath(local)}\\Json\\{lang}.json");
+                foreach (var j in json)
+                {
+                    sb.Append(j.Value);
+                }
+            }
+            var textAsset = new TextAsset(sb.ToString());
+            AssetDatabase.CreateAsset(textAsset, $"{GetRootPath(local)}\\AllText.txt");
+            Selection.activeObject = textAsset;
+            AssetDatabase.Refresh();
+        }
+
+        #endregion
     }
 }
