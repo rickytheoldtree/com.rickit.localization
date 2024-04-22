@@ -512,6 +512,8 @@ namespace RicKit.Localization.Utils
         public static void GenerateAllText(this LocalizationPackage local)
         {
             var sb = new StringBuilder();
+            sb.Append("1234567890!@#$%^&*()_+-=<>?,./;:'\"{}[]|\\~`");
+            sb.Append("，。、；‘’：“”【】《》？！￥…（）—");
             foreach (var lang in local.SupportedLanguages)
             {
                 var json = InputJson($"{GetRootPath(local)}\\Json\\{lang}.json");
