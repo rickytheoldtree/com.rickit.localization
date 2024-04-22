@@ -1,5 +1,5 @@
 # Changelog
-## [1.1.1] - 2024-04-22
+## [1.1.2] - 2024-04-22
 - new: `GenerateAllTexts` method
 ## [1.0.8] - 2024-02-20
 - fix: LICENSE.md
