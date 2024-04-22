@@ -520,9 +520,7 @@ namespace RicKit.Localization.Utils
                     sb.Append(j.Value);
                 }
             }
-            var textAsset = new TextAsset(sb.ToString());
-            AssetDatabase.CreateAsset(textAsset, $"{GetRootPath(local)}\\AllText.txt");
-            Selection.activeObject = textAsset;
+            File.WriteAllText($"{GetRootPath(local)}\\AllText.txt", sb.ToString());
             AssetDatabase.Refresh();
         }
 
