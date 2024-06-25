@@ -1,4 +1,6 @@
 # Changelog
+## [1.1.3] - 2024-06-25
+- new: `RicKit=>Localization=>PresetExtract`
 ## [1.1.2] - 2024-04-22
 - new: `GenerateAllTexts` method
 ## [1.0.8] - 2024-02-20
