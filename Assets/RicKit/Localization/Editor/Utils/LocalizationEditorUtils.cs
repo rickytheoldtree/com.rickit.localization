@@ -599,6 +599,7 @@ namespace RicKit.Localization.Utils
             GetAllJapanese();
             GenerateRussian();
             GenerateLatin();
+            GenerateHindi();
         }
 
         [MenuItem("RicKit/Localization/提取中文")]
@@ -781,6 +782,19 @@ namespace RicKit.Localization.Utils
             AssetDatabase.Refresh();
         }
 
+        
+        //生成印地语
+        [MenuItem("RicKit/Localization/生成印地语")]
+        public static void GenerateHindi()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0x0900; i <= 0x097f; i++)
+            {
+                sb.Append((char)i);
+            }
+
+            File.WriteAllText($"{Application.dataPath}\\Hindi.txt", sb.ToString());
+        }
         #endregion
     }
 }
