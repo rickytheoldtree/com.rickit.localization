@@ -77,8 +77,10 @@ namespace RicKit.Localization.Config
                     {
                         config.AddIsoPair(pair.Key, pair.Value);
                     }
-                    AssetDatabase.SaveAssets();
                     config.Refresh();
+                    EditorUtility.SetDirty(config);
+                    AssetDatabase.SaveAssets();
+                    isoPair.serializedObject.Update();
                 }
                 evt.Use();
                 EditorUtility.SetDirty(config);

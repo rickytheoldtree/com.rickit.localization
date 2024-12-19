@@ -1,5 +1,5 @@
 # Changelog
-## [1.1.5] - 2024-12-19
+## [1.1.6] - 2024-12-19
 - fix: `ConfigEditor` bug
 ## [1.1.4] - 2024-06-25
 - new: `RicKit=>Localization=>PresetExtract`
