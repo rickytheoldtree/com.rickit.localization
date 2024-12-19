@@ -81,6 +81,8 @@ namespace RicKit.Localization.Config
                     config.Refresh();
                 }
                 evt.Use();
+                EditorUtility.SetDirty(config);
+                AssetDatabase.SaveAssets();
             }
         }
         private List<IDictConverter> converters;
