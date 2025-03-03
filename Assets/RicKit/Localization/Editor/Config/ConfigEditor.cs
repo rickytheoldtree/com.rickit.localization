@@ -9,7 +9,7 @@ using UnityEngine;
 namespace RicKit.Localization.Config
 {
     [CustomEditor(typeof(Config),true)]
-    public class ConfigEditor : Editor
+    public class ConfigEditor : UnityEditor.Editor
     {
         private SerializedProperty isoPair;
         private Config config;

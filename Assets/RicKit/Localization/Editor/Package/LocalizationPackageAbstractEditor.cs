@@ -9,14 +9,14 @@ using Object = UnityEngine.Object;
 
 namespace RicKit.Localization.Package
 {
-    public abstract class LocalizationPackageAbstractEditor : Editor
+    public abstract class LocalizationPackageAbstractEditor : UnityEditor.Editor
     {
         public static string searchKey;
         private string lastSearchKey, newKey, newValue;
         private Dictionary<int, Kvp> searchResult = new Dictionary<int, Kvp>();
-        private bool foldAdd, foldTxtImport, foldMutiAdd, foldOthers, foldTranslation, forceUpdate;
+        private bool foldAdd, foldTxtImport, foldMultiAdd, foldOthers, foldTranslation, forceUpdate;
         public static bool foldSearch;
-        private static bool foldSupportLangs;
+        private static bool foldSupportedLanguages;
         protected LocalizationPackage package;
         private Vector2 scrollPos;
 
@@ -35,8 +35,8 @@ namespace RicKit.Localization.Package
                 richText = true
             };
             EditorGUI.indentLevel++;
-            foldSupportLangs = EditorGUILayout.Foldout(foldSupportLangs, "Supported Languages");
-            if (foldSupportLangs)
+            foldSupportedLanguages = EditorGUILayout.Foldout(foldSupportedLanguages, "Supported Languages");
+            if (foldSupportedLanguages)
             {
                 EditorGUI.indentLevel++;
                 foreach (var language in supportedLanguages)
@@ -291,8 +291,8 @@ namespace RicKit.Localization.Package
 
             #region 批量增改Key工具
 
-            foldMutiAdd = EditorGUILayout.Foldout(foldMutiAdd, "批量增改Key工具");
-            if (foldMutiAdd)
+            foldMultiAdd = EditorGUILayout.Foldout(foldMultiAdd, "批量增改Key工具");
+            if (foldMultiAdd)
             {
                 LocalizationEditorUtils.CreateNewJsonFolder(package);
                 EditorGUILayout.BeginHorizontal();

@@ -1,4 +1,6 @@
 # Changelog
+## [1.2.0] - 2025-03-03
+- new: `RicKit=>Localization=>TMP SDF Tools` `RicKit=>Localization=>Text to TMP`
 ## [1.1.6] - 2024-12-19
 - fix: `ConfigEditor` bug
 ## [1.1.4] - 2024-06-25
