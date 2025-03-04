@@ -1,4 +1,6 @@
 # Changelog
+## [1.2.1] - 2025-03-04
+- fix: `RicKit=>Localization=>TMP SDF Tools` clear dynamic data before generate
 ## [1.2.0] - 2025-03-03
 - new: `RicKit=>Localization=>TMP SDF Tools` `RicKit=>Localization=>Text to TMP`
 ## [1.1.6] - 2024-12-19

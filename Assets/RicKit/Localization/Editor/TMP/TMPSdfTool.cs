@@ -45,10 +45,25 @@ namespace RicKit.EditorTools
             }
 
             SetAtlasDynamic(assets);
+            ClearDynamicData(assets);
             TMPAtlasAutoGenerate();
             SetAtlasStatic(assets);
         }
-        
+
+        private static void ClearDynamicData(IEnumerable<Object> assets)
+        {
+            foreach (var obj in assets)
+            {
+                if (obj is TMP_FontAsset fontAsset)
+                {
+                    fontAsset.ClearFontAssetData();
+                    EditorUtility.SetDirty(fontAsset);
+                }
+            }
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         [MenuItem("Assets/TMP Atlas Generate")]
         public static void TMPAtlasAutoGenerate()
         {
