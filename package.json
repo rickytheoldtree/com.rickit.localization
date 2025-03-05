@@ -1,0 +1,17 @@
+{
+  "name": "com.rickit.localization",
+  "displayName": "RicKit Localization",
+  "author": {
+    "name": "LYQ"
+  },
+  "version": "1.2.2",
+  "unity": "2020.3",
+  "description": "RicKit Localization, can google translate",
+  "repository": {
+    "url": "https://github.com/rickytheoldtree/com.rickit.localization.git",
+    "type": "git"
+  },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  }
+}
