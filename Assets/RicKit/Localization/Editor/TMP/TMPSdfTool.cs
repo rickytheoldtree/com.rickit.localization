@@ -8,34 +8,15 @@ using Object = UnityEngine.Object;
 
 namespace RicKit.EditorTools
 {
-    public class TMPSdfTool : EditorWindow
+    public class TMPSdfTool : UnityEditor.Editor
     {
-        private static string folderPath;
-
-        private void OnEnable()
+        [MenuItem("Assets/TMP Tool/Fully Generate TMP Atlas")]
+        public static void GenerateSDF()
         {
-            folderPath = EditorPrefs.GetString($"TMPSdfTool_folderPath_{Application.identifier}", "Assets");
+            GenerateSDF("Assets");
         }
-
-        [MenuItem("RicKit/TMP/TMP SDF Tool")]
-        public static void ShowWindow()
+        private static void GenerateSDF(string folderPath)
         {
-            GetWindow<TMPSdfTool>("TMP SDF Tool");
-        }
-
-        private void OnGUI()
-        {
-            folderPath = EditorGUILayout.TextField("Folder Path", folderPath);
-            if(GUILayout.Button("Generate SDF"))
-            {
-                EditorPrefs.SetString($"TMPSdfTool_folderPath_{Application.identifier}", folderPath);
-                GenerateSDF();
-            }
-        }
-
-        private static void GenerateSDF()
-        {
-            //加载该文件夹下所有资源
             var paths = AssetDatabase.FindAssets("t:TMP_FontAsset", new[] {folderPath});
             var assets = new List<Object>();
             foreach (var p in paths)
@@ -64,7 +45,7 @@ namespace RicKit.EditorTools
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Assets/TMP Atlas Generate")]
+        [MenuItem("Assets/TMP Tool/Generate TMP Atlas")]
         public static void TMPAtlasAutoGenerate()
         {
             var textAssets = Selection.GetFiltered(typeof(TextAsset), SelectionMode.Assets);
@@ -89,7 +70,7 @@ namespace RicKit.EditorTools
             DestroyImmediate(go);
         }
         
-        [MenuItem("Assets/TMP Atlas Dynamic")]
+        [MenuItem("Assets/TMP Tool/TMP Atlas Dynamic")]
         public static void SetAtlasDynamic()
         {
             SetAtlasDynamic(Selection.objects);
@@ -109,7 +90,7 @@ namespace RicKit.EditorTools
             AssetDatabase.Refresh();
         }
         
-        [MenuItem("Assets/TMP Atlas Static")]
+        [MenuItem("Assets/TMP Tool/TMP Atlas Static")]
         public static void SetAtlasStatic()
         {
             SetAtlasStatic(Selection.objects);
