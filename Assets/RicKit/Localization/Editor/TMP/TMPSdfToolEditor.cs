@@ -22,25 +22,31 @@ namespace RicKit.EditorTools
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
-            Selection.activeObject = AssetDatabase.LoadAssetAtPath<Object>("Assets/TMPTool.asset");
+            Selection.activeObject = AssetDatabase.LoadAssetAtPath<Object>(AssetDatabase.GUIDToAssetPath(path[0]));
         }
         
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            var tool = (TMPSdfTool)target;
             if (GUILayout.Button("Update SDF Atlas"))
             {
-                UpdateSDFAtlas(tool.fontAssets, tool.textAssets);
+                var tool = (TMPSdfTool)target;
+                UpdateSDFAtlas(tool.defaultFont, tool.fallbackFonts, tool.textAssets);
             }
         }
         
-        private static void UpdateSDFAtlas(TMP_FontAsset[] assets, TextAsset[] textAssets)
+        private static void UpdateSDFAtlas(TMP_FontAsset defaultFont, TMP_FontAsset[] fallbackFonts, TextAsset[] textAssets)
         {
-            SetAtlasDynamic(assets);
-            ClearDynamicData(assets);
-            TMPAtlasAutoGenerate(textAssets);
-            SetAtlasStatic(assets);
+            var arr = new TMP_FontAsset[1 + fallbackFonts.Length];
+            arr[0] = defaultFont;
+            for (var i = 0; i < fallbackFonts.Length; i++)
+            {
+                arr[i + 1] = fallbackFonts[i];
+            }
+            SetAtlasDynamic(arr);
+            ClearDynamicData(arr);
+            TMPAtlasAutoGenerate(defaultFont, textAssets);
+            SetAtlasStatic(arr);
         }
 
         private static void ClearDynamicData(TMP_FontAsset[] assets)
@@ -54,7 +60,7 @@ namespace RicKit.EditorTools
             AssetDatabase.Refresh();
         }
 
-        private static void TMPAtlasAutoGenerate(TextAsset[] textAssets)
+        private static void TMPAtlasAutoGenerate(TMP_FontAsset defaultFont, TextAsset[] textAssets)
         {
             if (textAssets.Length == 0)
             {
@@ -70,6 +76,7 @@ namespace RicKit.EditorTools
             
             var go = new GameObject("TMPText(Temp asset, delete it)", typeof(TextMeshPro));
             var text = go.GetComponent<TextMeshPro>();
+            text.font = defaultFont;
             text.text = sb.ToString();
             text.ForceMeshUpdate();
             DestroyImmediate(go);

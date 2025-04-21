@@ -52,6 +52,7 @@ namespace RicKit.Editor
                 tmpComponent.fontSizeMax = textComponent.resizeTextMaxSize;
                 tmpComponent.enableWordWrapping = textComponent.horizontalOverflow == HorizontalWrapMode.Wrap;
                 tmpComponent.overflowMode = textComponent.verticalOverflow == VerticalWrapMode.Truncate ? TextOverflowModes.Truncate : TextOverflowModes.Overflow;
+                tmpComponent.raycastTarget = textComponent.raycastTarget;
                 
                 
                 tmpComponent.fontSharedMaterial = defaultSDFMaterial;
