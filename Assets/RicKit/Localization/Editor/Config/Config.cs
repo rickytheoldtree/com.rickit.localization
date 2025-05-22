@@ -12,15 +12,6 @@ namespace RicKit.Localization.Config
         public List<LanguageIsoPair> languageIsoPairs = new List<LanguageIsoPair>();
         private readonly Dictionary<string,string> languageIsoPairsDict = new Dictionary<string, string>();
         public List<string> SupportedLanguages { get; private set; }
-        public WebDriverType webDriver;
-        public bool customDriverPath;
-        public string driverPath;
-        public enum WebDriverType
-        {
-            Edge,
-            Chrome,
-            FireFox,
-        }
         [Serializable]
         public struct LanguageIsoPair
         {

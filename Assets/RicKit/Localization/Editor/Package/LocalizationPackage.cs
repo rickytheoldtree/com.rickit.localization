@@ -11,7 +11,7 @@ namespace RicKit.Localization.Package
         public string language;
         public bool isNew;
         [Serializable]
-        public struct Kvp
+        public struct Kvp : IEquatable<Kvp>
         {
             public string key;
             public string value;
@@ -19,6 +19,24 @@ namespace RicKit.Localization.Package
             {
                 this.key = key;
                 this.value = value;
+            }
+
+            public bool Equals(Kvp other)
+            {
+                return key == other.key && value == other.value;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is Kvp other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((key != null ? key.GetHashCode() : 0) * 397) ^ (value != null ? value.GetHashCode() : 0);
+                }
             }
         }
         public List<string> SupportedLanguages => LocalizationEditorUtils.GetSupportedLanguages();

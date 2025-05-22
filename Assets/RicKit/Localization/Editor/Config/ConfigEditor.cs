@@ -18,7 +18,6 @@ namespace RicKit.Localization.Config
             isoPair = serializedObject.FindProperty("languageIsoPairs");
             config = (Config)target;
             config.Refresh();
-            driverIndex = (int)config.webDriver;
         }
 
         public override void OnInspectorGUI()
@@ -27,8 +26,6 @@ namespace RicKit.Localization.Config
             EditorGUILayout.PropertyField(isoPair, true);
             EditorGUILayout.Separator();
             ChooseJsonConverter();
-            ChooseWebDriver();
-            SetCustomDriverPath();
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -89,7 +86,6 @@ namespace RicKit.Localization.Config
         }
         private List<IDictConverter> converters;
         private int converterIndex = -1;
-        private int driverIndex;
         private void ChooseJsonConverter()
         {
             if (converters == null)
@@ -110,31 +106,6 @@ namespace RicKit.Localization.Config
                 AssetDatabase.SaveAssets();
             }
             
-        }
-
-        private void ChooseWebDriver()
-        {
-            EditorGUI.BeginChangeCheck();
-            driverIndex = EditorGUILayout.Popup("WebDriver", driverIndex, Enum.GetNames(typeof(Config.WebDriverType)));
-            if (EditorGUI.EndChangeCheck())
-            {
-                config.webDriver = (Config.WebDriverType)driverIndex;
-                EditorUtility.SetDirty(config);
-                AssetDatabase.SaveAssets();
-            }
-        }
-        
-        private void SetCustomDriverPath()
-        {
-            config.customDriverPath = EditorGUILayout.Toggle("自定义Driver路径", config.customDriverPath);
-            if(config.customDriverPath)
-            {
-                config.driverPath = EditorGUILayout.TextField("Driver绝对路径", config.driverPath);
-            }
-            else
-            {
-                EditorGUILayout.HelpBox("如果驱动版本不对，请自定义driver读取路径", MessageType.Info);
-            }
         }
     }
 }

@@ -1,4 +1,6 @@
 # Changelog
+## [1.3.0] - 2025-05-22
+- refactor: remove translation tools and WebDriver configuration from editor
 ## [1.2.4] - 2025-03-27
 - add: `RicKit=>TMP=>TMP Tools`
 ## [1.2.2] - 2025-03-04

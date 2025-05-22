@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using RicKit.Localization.Translate;
 using RicKit.Localization.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -53,65 +52,6 @@ namespace RicKit.Localization.Package
             }
 
             EditorGUI.indentLevel--;
-        }
-        private static int translateFromIndex;
-        private static int translateToIndex;
-        private void ShowTranslationTools()
-        {
-            foldTranslation = EditorGUILayout.Foldout(foldTranslation, "翻译工具");
-            if (foldTranslation)
-            {
-                EditorGUILayout.HelpBox("翻译工具需要WebDriver，如有疑问请看README; 翻译时读取的是Json文件夹下的.json文件为源文件，翻译后会保存到TranslateJson文件夹", MessageType.Info);
-                EditorGUI.indentLevel++;
-                EditorGUILayout.LabelField($"当前WebDriver：{LocalizationEditorUtils.GetWebDriver()}");
-                //选择源语言
-                var translateSource = package.SupportedLanguages.ToArray();
-                translateFromIndex = EditorGUILayout.Popup("翻译源语言：", translateFromIndex, translateSource);
-                //选择目标语言
-                translateToIndex = EditorGUILayout.Popup("翻译目标语言：", translateToIndex, translateSource);
-                var translateFrom = translateSource[translateFromIndex];
-                var translateTo = translateSource[translateToIndex];
-                EditorGUI.indentLevel--;
-                EditorGUILayout.Separator();
-                EditorGUILayout.LabelField($"翻译成：{translateTo}");
-                if (GUILayout.Button($"翻译成{translateTo}"))
-                {
-                    package.TranslateJson(translateFrom, translateTo);
-                    GoogleTranslator.Close();
-                }
-                EditorGUILayout.Separator();
-                EditorGUILayout.LabelField($"全部翻译");
-                if (GUILayout.Button("翻译成所有支持语言"))
-                {
-                    foreach (var lang in package.SupportedLanguages)
-                    {
-                        if (!package.TranslateJson(translateFrom, lang))
-                        {
-                            Debug.LogError($"任务中断，翻译到{lang}失败");
-                            break;
-                        }
-                    }
-                    GoogleTranslator.Close();
-                }
-                EditorGUILayout.Separator();
-                EditorGUILayout.LabelField($"翻译剩下语言（TranslateJson中没有的）");
-                if (GUILayout.Button("翻译成还未翻译过的支持的语言"))
-                {
-                    foreach (var lang in package.SupportedLanguages)
-                    {
-                        if(package.IsTranslated(lang))
-                        {
-                            continue;
-                        }
-                        if (!package.TranslateJson(translateFrom, lang))
-                        {
-                            Debug.LogError($"任务中断，翻译到{lang}失败");
-                            break;
-                        }
-                    }
-                    GoogleTranslator.Close();
-                }
-            }
         }
 
         private int langIndex;
@@ -312,10 +252,7 @@ namespace RicKit.Localization.Package
             }
 
             #endregion
-
-            #region 翻译
-            ShowTranslationTools();
-            #endregion
+            
             serializedObject.ApplyModifiedProperties();
         }
     }

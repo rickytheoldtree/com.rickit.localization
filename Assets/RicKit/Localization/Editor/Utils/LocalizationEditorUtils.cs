@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using RicKit.Localization.Package;
-using RicKit.Localization.Translate;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -89,12 +88,6 @@ namespace RicKit.Localization.Utils
         {
             var config = GetConfig();
             config.Refresh();
-        }
-
-        public static Config.Config.WebDriverType GetWebDriver()
-        {
-            var config = GetConfig();
-            return config.webDriver;
         }
 
         private static LocalizationPackage GetNewEditor()
@@ -477,99 +470,6 @@ namespace RicKit.Localization.Utils
 
             AssetDatabase.Refresh();
         }
-
-        #region 翻译
-
-        public static bool TranslateJson(this LocalizationPackage local, string from, string to)
-        {
-            var translator = GoogleTranslator.GetInstance(GetConfig().webDriver);
-            if (from == to)
-            {
-                Debug.Log($"跳过翻译{to}，因为与源语言相同");
-                return true;
-            }
-
-            var rootPath = GetRootPath(local);
-            var originJsonPath = $"{rootPath}\\Json\\{from}.json";
-            if (!File.Exists(originJsonPath))
-            {
-                Debug.LogError($"文件{rootPath}\\Json\\{from}.json不存在");
-                return false;
-            }
-
-            var sb = new StringBuilder();
-            var originJson = InputJson(originJsonPath);
-            var values = new List<string>();
-            foreach (var d in originJson)
-            {
-                var newText = $"%0A-----------------------%0A{d.Value.Trim()}";
-                if (newText.Length > 5000)
-                {
-                    Debug.LogError($"单个文本长度超过5000，无法翻译：{d.Key}；请自行切分后重新尝试");
-                    return false;
-                }
-
-                if (sb.Length + newText.Length <= 5000)
-                {
-                    sb.Append(newText);
-                }
-                else
-                {
-                    if (!translator.Translate(sb.ToString(), from, to, (result) => { values.AddRange(result); }))
-                    {
-                        return false;
-                    }
-
-                    sb.Clear();
-                    sb.Append(newText);
-                }
-            }
-
-            if (sb.Length > 0)
-            {
-                if (!translator.Translate(sb.ToString(), from, to, (result) => { values.AddRange(result); }))
-                {
-                    return false;
-                }
-            }
-
-            var dic = new Dictionary<string, string>();
-            var keys = originJson.Keys.ToList();
-            if (keys.Count != values.Count)
-            {
-                Debug.LogError("翻译后数量与原文本数量不一致");
-                return false;
-            }
-
-            for (var i = 0; i < keys.Count; i++)
-            {
-                dic.Add(keys[i], values[i]);
-            }
-
-            var foldPath = $"{rootPath}\\TranslateJson";
-            if (!Directory.Exists(foldPath))
-            {
-                Directory.CreateDirectory(foldPath);
-            }
-
-            OutputJson($"{foldPath}\\{to}.json", dic);
-            Debug.Log($"{to}翻译完成，文件路径：{foldPath}\\{to}.json");
-            return true;
-        }
-
-        public static bool IsTranslated(this LocalizationPackage local, string lang)
-        {
-            var rootPath = $"{GetRootPath(local)}\\TranslateJson";
-            if (!Directory.Exists(rootPath))
-            {
-                Directory.CreateDirectory(rootPath);
-            }
-
-            var path = $"{rootPath}\\{lang}.json";
-            return File.Exists(path);
-        }
-
-        #endregion
 
         #region 生成文本范围
 
